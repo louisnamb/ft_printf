@@ -6,7 +6,7 @@
 /*   By: lnambaji <lnambaji@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/29 12:43:45 by lnambaji          #+#    #+#             */
-/*   Updated: 2023/03/29 16:09:55 by lnambaji         ###   ########.fr       */
+/*   Updated: 2023/03/29 16:18:44 by lnambaji         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,7 +51,6 @@ void	ft_putnbr_fd(int n, int fd)
 static int	digitspecifier(const char c, va_list curr_varr)
 {
 	int	num;
-
 	num = va_arg(curr_varr, int);
 	ft_putnbr_fd(num, 1);
 	return (1);
@@ -93,7 +92,10 @@ int	ft_printf(const char *format, ...)
 				whichspecifier(*(format + 1), input);
 			else
 				break;
+			format++;
 		}
+		else
+			write(1, format, 1);
 		++format;
 	}
 	va_end(input);
@@ -103,6 +105,8 @@ int	ft_printf(const char *format, ...)
 int	main(void)
 {
 	ft_printf("%dhellof%df%d", 6, 6, 0);
+	printf("\n");
+	printf("%dhellof%df%d", 6, 6, 0);
 	return 0;
 }
 
