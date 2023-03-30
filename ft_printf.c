@@ -6,7 +6,7 @@
 /*   By: lnambaji <lnambaji@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/29 12:43:45 by lnambaji          #+#    #+#             */
-/*   Updated: 2023/03/29 16:18:44 by lnambaji         ###   ########.fr       */
+/*   Updated: 2023/03/30 11:06:13 by lnambaji         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,66 +47,68 @@ void	ft_putnbr_fd(int n, int fd)
 	else
 		ft_putchar_fd(n + '0', fd);
 }
-
+/*
 static int	digitspecifier(const char c, va_list curr_varr)
 {
 	int	num;
 	num = va_arg(curr_varr, int);
 	ft_putnbr_fd(num, 1);
 	return (1);
-}
+}*/
 
 static int	validspecifier(const char c)
 {
 	return (c == 'd' || c == 's' || c == 'p' || c == 'd' || c == 'i' 
-	|| c == 'u' || c == 'x' || c == 'u' || c == 'x' || c == 'X');
+	|| c == 'u' || c == 'c' || c == 'u' || c == 'x' || c == 'X');
 }
 
 void	whichspecifier(const char c, va_list curr_varr)
 {
-	if (c =='d')
-		digitspecifier(c, curr_varr);
+	if (c == 'd')//digitspecifier(c, curr_varr);
+		ft_putnbr_fd((int)va_arg(curr_varr, int), 1);
+	else if (c == 's')
+		ft_putstr_fd((char *)va_arg(curr_varr, char *), 1);
+	else if (c == 'c')
+		ft_putchar_fd()
+	else if (c == 's')
+	else if (c == 'p')
+	else if (c == 'i')
+	else if (c == 'u')
+	else if (c == 'x')
+	else if (c == 'X')*/
 	else
 		return ;
-	/*else if (c =='s')
-	else if (c =='p')
-	else if (c =='d')
-	else if (c =='i')		
-	else if (c =='u') 
-	else if (c =='x') 
-	else if (c =='u') 
-	else if (c =='x') 
-	else (c =='X')*/
 }
 
 int	ft_printf(const char *format, ...)
 {
 	va_list	input;
-	
+	int	formatlen;
+
+	formatlen = 0;
 	va_start(input, format);
 	while (*format)
 	{
-		if (*format == '%')
+		if (*format == '%' && validspecifier(*(format + 1)))
 		{
-			if (validspecifier(*(format + 1)))
-				whichspecifier(*(format + 1), input);
-			else
-				break;
+			whichspecifier(*(format + 1), input);
 			format++;
 		}
 		else
 			write(1, format, 1);
 		++format;
+		formatlen++;
 	}
 	va_end(input);
-	return (0);
+	return (formatlen);
 }
 
 int	main(void)
 {
-	ft_printf("%dhellof%df%d", 6, 6, 0);
+	char *str = "hello";
+	ft_printf("%dhellof%sf%d", 6, str, 0);
 	printf("\n");
-	printf("%dhellof%df%d", 6, 6, 0);
+	printf("%dhellof%sf%d", 6, str, 0);
 	return 0;
 }
 
