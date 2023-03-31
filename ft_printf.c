@@ -6,7 +6,7 @@
 /*   By: lnambaji <lnambaji@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/29 12:43:45 by lnambaji          #+#    #+#             */
-/*   Updated: 2023/03/31 13:52:05 by lnambaji         ###   ########.fr       */
+/*   Updated: 2023/03/31 15:55:16 by lnambaji         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -146,5 +146,46 @@ Printf FYI:
 	as to the number of variables inputted
 	- How are you going to know the type when youre doing "va_arg(va_list param, variable type)"?
 	I say use the "typeof()" function
-
+Printf future features:
+	//////////////////////////////////////
+	//									//
+	//		  Character Sequence		//	
+	//									//
+	//////////////////////////////////////
+	"%n$" where n is the argument number we want to print. e.g.:
+	main():	
+		int a = 10;
+		int b = 20;
+		int c = 30;
+		printf("%3$d %1$d %2$d\n", a, b, c);
+	Output:
+		30 10 20
+	//////////////////////////////////////
+	//									//
+	//		  Field width				//	
+	//									//
+	//////////////////////////////////////
+	- (%n{specifier}) field widths where the syntax is "%n{specifier}", e.g., "%10d" which will
+	print the integer with at aleast 10 characters (being spaces) padding. If the 'n' number 
+	given is less than the number of digits of the int given, then printf will ignore it. e.g.:
+	main():
+		int num = 123;
+		printf("%3d\n", num);
+		printf("%7d\n", num);
+	
+		int num = 123;
+		printf("%-10d", num);
+		printf("------");
+		printf("%10d", num);
+	output:
+	""123
+	"    "123
+	"123       ------       123"	
+	//////////////////////////////////////
+	//									//
+	//		  	Precision				//	
+	//									//
+	//////////////////////////////////////
+	- gives the minimum number of digits to appear for the d, i, o, u, x, and X 
+	conversion specifiers
 */
