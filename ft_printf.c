@@ -6,7 +6,7 @@
 /*   By: lnambaji <lnambaji@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/29 12:43:45 by lnambaji          #+#    #+#             */
-/*   Updated: 2023/03/30 11:06:13 by lnambaji         ###   ########.fr       */
+/*   Updated: 2023/03/31 13:52:05 by lnambaji         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,100 +15,123 @@
 //#include "libft.h"
 #include "ft_printf.h"
 
-void	ft_putstr_fd(char *s, int fd)
+size_t	ft_strlen(const char *s)
 {
-	if (!s || !fd)
-		return ;
-	while (*s)
-		write(fd, &*s++, 1);
+	size_t	i;
+
+	i = 0;
+	while (s[i])
+	{
+		i++;
+	}
+	return (i);
 }
 
-void	ft_putchar_fd(char c, int fd)
+int	ft_putstr_fd(char *s, int fd)
+{
+	int	len;
+
+	len = ft_strlen(s);
+	if (!s || !fd)
+		return (0);
+	printf("ft_putstr_fd = %s\n", s);
+	return (write(fd, &*s, len));
+}
+
+int	ft_putchar_fd(char c, int fd)
 {
 	if (fd < 0)
-		return ;
-	write(fd, &c, 1);
+		return (0);
+	return (write(fd, &c, 1));
 }
 
-void	ft_putnbr_fd(int n, int fd)
+int    ft_putnbr_fd(int n, int fd, int total, int *sum)
 {
-	if (n == -2147483648)
-		ft_putstr_fd("-2147483648", fd);
-	else if (n < 0)
-	{
-		ft_putchar_fd('-', fd);
-		ft_putnbr_fd(-n, fd);
-	}
-	else if (n >= 10)
-	{
-		ft_putnbr_fd(n / 10, fd);
-		ft_putchar_fd(n % 10 + '0', fd);
-	}
-	else
-		ft_putchar_fd(n + '0', fd);
-}
-/*
-static int	digitspecifier(const char c, va_list curr_varr)
-{
-	int	num;
-	num = va_arg(curr_varr, int);
-	ft_putnbr_fd(num, 1);
-	return (1);
-}*/
-
-static int	validspecifier(const char c)
-{
-	return (c == 'd' || c == 's' || c == 'p' || c == 'd' || c == 'i' 
-	|| c == 'u' || c == 'c' || c == 'u' || c == 'x' || c == 'X');
+    if (n == -2147483648)
+        total += ft_putstr_fd("-2147483648", fd);
+    else if (n < 0)
+    {
+        total += ft_putchar_fd('-', fd);
+        ft_putnbr_fd(-n, fd, total, sum);    
+    }
+    else if (n >= 10)
+    {
+        total++;
+        ft_putnbr_fd(n / 10, fd, total, sum);
+        total += ft_putchar_fd(n % 10 + '0', fd);
+    }
+    else
+    {
+        *sum = total;
+        total += ft_putchar_fd(n + '0', fd);
+    }
+    return (*sum + 1);
 }
 
-void	whichspecifier(const char c, va_list curr_varr)
+int	whichspecifier(const char c, va_list curr_varr)
 {
-	if (c == 'd')//digitspecifier(c, curr_varr);
-		ft_putnbr_fd((int)va_arg(curr_varr, int), 1);
+	int	sum;
+
+	sum = 0;
+	if (c == 'd')
+		sum = ft_putnbr_fd((int)va_arg(curr_varr, int), 1, sum, &sum);
 	else if (c == 's')
-		ft_putstr_fd((char *)va_arg(curr_varr, char *), 1);
+		sum = ft_putstr_fd((char *)va_arg(curr_varr, char *), 1);
 	else if (c == 'c')
-		ft_putchar_fd()
-	else if (c == 's')
-	else if (c == 'p')
+		sum = ft_putchar_fd((char)va_arg(curr_varr, int), 1);
+	else if (c == '%')
+		sum = write(1, &c, 1);
+	/*else if (c == 'p')
 	else if (c == 'i')
 	else if (c == 'u')
 	else if (c == 'x')
 	else if (c == 'X')*/
-	else
-		return ;
+	return (sum);
+
 }
 
 int	ft_printf(const char *format, ...)
 {
 	va_list	input;
-	int	formatlen;
+	int	sum;
 
-	formatlen = 0;
+	sum = 0;
 	va_start(input, format);
 	while (*format)
 	{
-		if (*format == '%' && validspecifier(*(format + 1)))
+		if (*format == '%')
 		{
-			whichspecifier(*(format + 1), input);
+			sum += whichspecifier(*(format + 1), input);
 			format++;
 		}
+		else if (*format == 10)
+		{
+			write(1, "\n", 1);
+			sum += 2;
+		}
 		else
-			write(1, format, 1);
+			sum += write(1, format, 1);
 		++format;
-		formatlen++;
 	}
 	va_end(input);
-	return (formatlen);
+	
+	return (sum);
 }
 
 int	main(void)
 {
 	char *str = "hello";
-	ft_printf("%dhellof%sf%d", 6, str, 0);
+	int len1, len2;
+
+	len1 = 0;
+	len2 = 0;
+	len1 = ft_printf("%d", -433);
 	printf("\n");
-	printf("%dhellof%sf%d", 6, str, 0);
+	len2 = printf("%d", -433);
+	if (len1 == len2)
+		printf("\n\033[0;32mCORRECT\033[0m");
+	else
+		printf("\033[0;31m\nINCORRECT GOT: %d EXP: %d\n\033[0m", len1, len2);
 	return 0;
 }
 
