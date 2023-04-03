@@ -6,7 +6,7 @@
 /*   By: lnambaji <lnambaji@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/29 12:43:45 by lnambaji          #+#    #+#             */
-/*   Updated: 2023/03/31 15:55:16 by lnambaji         ###   ########.fr       */
+/*   Updated: 2023/04/03 15:20:28 by lnambaji         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,62 @@
 #include <stdarg.h>
 //#include "libft.h"
 #include "ft_printf.h"
+
+int	ft_hex_putstr(char *s, int fd, int length)
+{
+	int	sum;
+
+	sum = 0;
+	if (!s)
+		return (0);
+	while (length > 0)
+	{
+		sum += write(fd, &s[length], 1);
+		length--;
+	}
+	write(fd, &s[length], 1);
+	return (sum);
+}
+
+int	ft_hex_length(int num, int base)
+{
+	int	length;
+
+	length = 0;
+	while (num != 0)
+	{
+		num /= base;
+		length++;
+	}
+	return (length);
+}
+
+int	ft_convert(unsigned int num, int base, int low)
+{
+	char	*uphexi;
+	char	*p_str;
+	char	*final;
+	int		chck;
+	int		dummy;
+
+	dummy = num;
+	chck = 0;
+	uphexi = "0123456789ABCDEF0123456789abcdef";
+	if (low)
+		chck = 16;
+	p_str = malloc(sizeof(char) * ft_hex_length(num, base) + 1);
+	if (!p_str)
+		return (0);
+	final = p_str;
+	while (dummy != 0)
+	{
+		*p_str = uphexi[dummy % base + chck];
+		dummy /= base;
+		p_str++;
+	}
+	*p_str = '\0';
+	return (ft_hex_putstr(final, 1, ft_hex_length(num, base)));
+}
 
 size_t	ft_strlen(const char *s)
 {
@@ -81,6 +137,10 @@ int	whichspecifier(const char c, va_list curr_varr)
 		sum = ft_putchar_fd((char)va_arg(curr_varr, int), 1);
 	else if (c == '%')
 		sum = write(1, &c, 1);
+	else if (c == 'x')
+		sum = ft_convert((int)va_arg(curr_varr, int), 16, 1); //lowercase
+	else if (c == 'X')
+		sum = ft_convert((int)va_arg(curr_varr, int), 16, 0); //lowercase
 	/*else if (c == 'p')
 	else if (c == 'i')
 	else if (c == 'u')
@@ -120,14 +180,14 @@ int	ft_printf(const char *format, ...)
 
 int	main(void)
 {
-	char *str = "hello";
+	int	num = 564563;
 	int len1, len2;
 
 	len1 = 0;
 	len2 = 0;
-	len1 = ft_printf("%d", -433);
+	len1 = ft_printf("%X", num);
 	printf("\n");
-	len2 = printf("%d", -433);
+	len2 = printf("%X", num);
 	if (len1 == len2)
 		printf("\n\033[0;32mCORRECT\033[0m");
 	else
