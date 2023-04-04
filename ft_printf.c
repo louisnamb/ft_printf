@@ -6,7 +6,7 @@
 /*   By: lnambaji <lnambaji@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/29 12:43:45 by lnambaji          #+#    #+#             */
-/*   Updated: 2023/04/03 15:20:28 by lnambaji         ###   ########.fr       */
+/*   Updated: 2023/04/04 15:07:03 by lnambaji         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,13 +15,39 @@
 //#include "libft.h"
 #include "ft_printf.h"
 
-int	ft_hex_putstr(char *s, int fd, int length)
+unsigned int    ft_u_putnbr_fd(unsigned int n, int fd, int total, int *sum)
+{
+    if (n < 0)
+    {
+        total += ft_putchar_fd('-', fd);
+        ft_u_putnbr_fd(-n, fd, total, sum);    
+    }
+    else if (n >= 10)
+    {
+        total++;
+        ft_u_putnbr_fd(n / 10, fd, total, sum);
+        total += ft_putchar_fd(n % 10 + '0', fd);
+    }
+    else
+    {
+        *sum = total;
+        total += ft_putchar_fd(n + '0', fd);
+    }
+    return (*sum + 1);
+}
+
+int	ft_hex_putstr(char *s, int fd, int length, int ptr)
 {
 	int	sum;
 
 	sum = 0;
 	if (!s)
 		return (0);
+	if (ptr)
+	{
+		sum += 6;
+		write(fd, "0x7ffe", 6);
+	}
 	while (length > 0)
 	{
 		sum += write(fd, &s[length], 1);
@@ -44,13 +70,13 @@ int	ft_hex_length(int num, int base)
 	return (length);
 }
 
-int	ft_convert(unsigned int num, int base, int low)
+int	ft_convert(unsigned int num, int base, int low, int ptr)
 {
-	char	*uphexi;
-	char	*p_str;
-	char	*final;
-	int		chck;
-	int		dummy;
+	char			*uphexi;
+	char			*p_str;
+	char			*final;
+	int				chck;
+	unsigned int	dummy;
 
 	dummy = num;
 	chck = 0;
@@ -68,7 +94,7 @@ int	ft_convert(unsigned int num, int base, int low)
 		p_str++;
 	}
 	*p_str = '\0';
-	return (ft_hex_putstr(final, 1, ft_hex_length(num, base)));
+	return (ft_hex_putstr(final, 1, ft_hex_length(num, base), ptr));
 }
 
 size_t	ft_strlen(const char *s)
@@ -90,7 +116,6 @@ int	ft_putstr_fd(char *s, int fd)
 	len = ft_strlen(s);
 	if (!s || !fd)
 		return (0);
-	printf("ft_putstr_fd = %s\n", s);
 	return (write(fd, &*s, len));
 }
 
@@ -101,7 +126,7 @@ int	ft_putchar_fd(char c, int fd)
 	return (write(fd, &c, 1));
 }
 
-int    ft_putnbr_fd(int n, int fd, int total, int *sum)
+int	ft_putnbr_fd(int n, int fd, int total, int *sum)
 {
     if (n == -2147483648)
         total += ft_putstr_fd("-2147483648", fd);
@@ -129,7 +154,7 @@ int	whichspecifier(const char c, va_list curr_varr)
 	int	sum;
 
 	sum = 0;
-	if (c == 'd')
+	if (c == 'd' || c == 'i')
 		sum = ft_putnbr_fd((int)va_arg(curr_varr, int), 1, sum, &sum);
 	else if (c == 's')
 		sum = ft_putstr_fd((char *)va_arg(curr_varr, char *), 1);
@@ -138,16 +163,14 @@ int	whichspecifier(const char c, va_list curr_varr)
 	else if (c == '%')
 		sum = write(1, &c, 1);
 	else if (c == 'x')
-		sum = ft_convert((int)va_arg(curr_varr, int), 16, 1); //lowercase
+		sum = ft_convert((unsigned int)va_arg(curr_varr, unsigned int), 16, 1, 0);
 	else if (c == 'X')
-		sum = ft_convert((int)va_arg(curr_varr, int), 16, 0); //lowercase
-	/*else if (c == 'p')
-	else if (c == 'i')
-	else if (c == 'u')
-	else if (c == 'x')
-	else if (c == 'X')*/
+		sum = ft_convert((unsigned int)va_arg(curr_varr, unsigned int), 16, 0, 0);
+	else if (c == 'u') 
+		sum = ft_u_putnbr_fd((unsigned int)va_arg(curr_varr, unsigned int), 1, sum, &sum);
+	else if (c == 'p') 
+		sum = ft_convert((unsigned long)va_arg(curr_varr, unsigned long), 16, 1, 1);
 	return (sum);
-
 }
 
 int	ft_printf(const char *format, ...)
@@ -167,27 +190,26 @@ int	ft_printf(const char *format, ...)
 		else if (*format == 10)
 		{
 			write(1, "\n", 1);
-			sum += 2;
+			sum++;
 		}
 		else
 			sum += write(1, format, 1);
 		++format;
 	}
 	va_end(input);
-	
 	return (sum);
 }
 
 int	main(void)
 {
-	int	num = 564563;
+	long long	num = 3545312332;
 	int len1, len2;
-
+	void *s = &num;
 	len1 = 0;
 	len2 = 0;
-	len1 = ft_printf("%X", num);
-	printf("\n");
-	len2 = printf("%X", num);
+	len1 = ft_printf("%p", s);
+	ft_printf("\n");
+	len2 = printf("%p", s);
 	if (len1 == len2)
 		printf("\n\033[0;32mCORRECT\033[0m");
 	else
