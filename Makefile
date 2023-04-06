@@ -6,7 +6,7 @@
 #    By: lnambaji <lnambaji@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/04/06 10:24:40 by lnambaji          #+#    #+#              #
-#    Updated: 2023/04/06 10:37:33 by lnambaji         ###   ########.fr        #
+#    Updated: 2023/04/06 12:48:12 by lnambaji         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -18,7 +18,7 @@ CC				=	gcc
 RM				=	rm -f
 CFLAGS			=	-Wall -Wextra -Werror
 
-NAME			= ft_printf.a
+NAME			= libftprintf.a
 
 all:			$(NAME)
 

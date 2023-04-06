@@ -6,31 +6,31 @@
 /*   By: lnambaji <lnambaji@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 10:18:28 by lnambaji          #+#    #+#             */
-/*   Updated: 2023/04/06 10:19:27 by lnambaji         ###   ########.fr       */
+/*   Updated: 2023/04/06 13:03:02 by lnambaji         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "ft_printf.h"
+#include "ft_printf.h"
 
-unsigned int    ft_u_putnbr_fd(unsigned int n, int fd, int total, int *sum)
+unsigned int	ft_u_putnbr_fd(unsigned int n, int fd, int total, int *sum)
 {
-    if (n < 0)
-    {
-        total += ft_putchar_fd('-', fd);
-        ft_u_putnbr_fd(-n, fd, total, sum);    
-    }
-    else if (n >= 10)
-    {
-        total++;
-        ft_u_putnbr_fd(n / 10, fd, total, sum);
-        total += ft_putchar_fd(n % 10 + '0', fd);
-    }
-    else
-    {
-        *sum = total;
-        total += ft_putchar_fd(n + '0', fd);
-    }
-    return (*sum + 1);
+	if (n < 0)
+	{
+		total += ft_putchar_fd('-', fd);
+		ft_u_putnbr_fd(-n, fd, total, sum);
+	}
+	else if (n >= 10)
+	{
+		total++;
+		ft_u_putnbr_fd(n / 10, fd, total, sum);
+		total += ft_putchar_fd(n % 10 + '0', fd);
+	}
+	else
+	{
+		*sum = total;
+		total += ft_putchar_fd(n + '0', fd);
+	}
+	return (*sum + 1);
 }
 
 int	ft_hex_putstr(char *s, int fd, int length, int ptr)
