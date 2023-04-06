@@ -6,7 +6,7 @@
 /*   By: lnambaji <lnambaji@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/29 12:43:45 by lnambaji          #+#    #+#             */
-/*   Updated: 2023/04/04 15:07:03 by lnambaji         ###   ########.fr       */
+/*   Updated: 2023/04/06 09:31:28 by lnambaji         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,10 +44,7 @@ int	ft_hex_putstr(char *s, int fd, int length, int ptr)
 	if (!s)
 		return (0);
 	if (ptr)
-	{
-		sum += 6;
-		write(fd, "0x7ffe", 6);
-	}
+		sum += write(fd, "0x", 2);
 	while (length > 0)
 	{
 		sum += write(fd, &s[length], 1);
@@ -57,7 +54,7 @@ int	ft_hex_putstr(char *s, int fd, int length, int ptr)
 	return (sum);
 }
 
-int	ft_hex_length(int num, int base)
+int	ft_hex_length(unsigned long num, int base)
 {
 	int	length;
 
@@ -70,13 +67,13 @@ int	ft_hex_length(int num, int base)
 	return (length);
 }
 
-int	ft_convert(unsigned int num, int base, int low, int ptr)
+int	ft_convert(unsigned long num, int base, int low, int ptr)
 {
 	char			*uphexi;
 	char			*p_str;
 	char			*final;
 	int				chck;
-	unsigned int	dummy;
+	unsigned long	dummy;
 
 	dummy = num;
 	chck = 0;
@@ -202,12 +199,12 @@ int	ft_printf(const char *format, ...)
 
 int	main(void)
 {
-	long long	num = 3545312332;
+	long long	num = 5241465;
 	int len1, len2;
 	void *s = &num;
 	len1 = 0;
 	len2 = 0;
-	len1 = ft_printf("%p", s);
+	len1 = ft_printf("%%%");
 	ft_printf("\n");
 	len2 = printf("%p", s);
 	if (len1 == len2)
