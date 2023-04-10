@@ -26,14 +26,6 @@
 #  define OPEN_MAX 32
 # endif
 
-unsigned int	ft_u_putnbr_fd(unsigned int n, int fd, int total, int *sum);
-
-int				ft_hex_putstr(char *s, int fd, int length, int ptr);
-
-int				ft_hex_length(unsigned long num, int base);
-
-int				ft_convert(unsigned long num, int base, int low, int ptr);
-
 size_t			ft_strlen(const char *s);
 
 int				ft_putstr_fd(char *s, int fd);
@@ -42,7 +34,19 @@ int				ft_putchar_fd(char c, int fd);
 
 int				ft_putnbr_fd(int n, int fd, int total, int *sum);
 
-int				whichspecifier(const char c, va_list curr_varr);
+int				whichspecifier(const char c, va_list var);
+
+int				ft_printf(const char *format, ...);
+
+unsigned int	ft_uputnbr_fd(unsigned int n, int fd, int total, int *sum);
+
+int				ft_hputstr(char *s, int fd, int length, int ptr);
+
+int				ft_hexlen(signed long long int num, int base);
+
+char			*ptrmkr(char *ptr, signed long long int num);
+
+int				ft_convert(signed long long int num, int base, int low, int ptr);
 
 int				ft_printf(const char *format, ...);
 

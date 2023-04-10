@@ -1,7 +1,7 @@
-# include <string.h>
-# include <stdlib.h>
-# include <unistd.h>
-# include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <stdio.h>
 #include <limits.h>
 #include <stdarg.h>
 
@@ -84,15 +84,22 @@ unsigned int	ft_u_putnbr_fd(unsigned int n, int fd, int total, int *sum)
 int	ft_hex_putstr(char *s, int fd, int length, int ptr)
 {
 	int	sum;
+	int	i;
 
+	i = 0;
 	sum = 0;
 	if (!s)
 		return (0);
-	sum += write(fd, &s, length);
+    while (length >= 0)
+    {
+        sum += write(fd, &s[length], 1);
+        length--;
+    }
+//	sum += write(fd, &s[length], 1);
 	return (sum);
 }
 
-int	ft_hex_length(unsigned long num, int base)
+int	ft_hexlen(unsigned long num, int base)
 {
 	int	length;
 	int	add;
@@ -109,13 +116,8 @@ int	ft_hex_length(unsigned long num, int base)
 
 char *ptrmkr(char *ptr, unsigned long num)
 {
-	char *dummy_ptr;
-
-	dummy_ptr = ptr;
-	dummy_ptr[0] = '0';
-	dummy_ptr[1] = 'x';
 	if (num == 0)
-		dummy_ptr[2] = '0';
+		ptr[2] = '0';
 	return (ptr);
 }
 
@@ -131,14 +133,14 @@ int	ft_convert(unsigned long num, int base, int low, int ptr)
 	dummy = num;
 	i = 0;
 	uphexi = "0123456789ABCDEF0123456789abcdef";
-	p_str = malloc(sizeof(char) * (ft_hex_length(num, base) + 2) + (2 * ptr));
+	p_str = malloc(sizeof(char) * (ft_hexlen(num, base) + 2) + (2 * ptr));
 	if (!p_str)
 		return (0);
-	if (ptr)
+	if (num == 0)
 	{
-		ptrmkr(p_str, num);
-		sum += 2;
-		i += 2;
+		printf("inside if\n");
+		if (p_str[2] == 48)
+			i++;
 	}
 	while (dummy != 0)
 	{
@@ -146,7 +148,7 @@ int	ft_convert(unsigned long num, int base, int low, int ptr)
 		dummy /= base;
 		i++;
 	}
-	p_str[(ft_hex_length(num, base) + 2) + (2 * ptr) - 1] = '\0';
+	p_str[i] = 0;
 	sum += ft_hex_putstr(p_str, 1, i, ptr);
 	free(p_str);
 	return (sum);
@@ -172,7 +174,10 @@ int	whichspecifier(const char c, va_list var)
 	else if (c == 'u')
 		s = ft_u_putnbr_fd((unsigned int)va_arg(var, unsigned int), 1, s, &s);
 	else if (c == 'p')
+	{
+		s += write(1, "0x", 2);
 		s = ft_convert((unsigned long)va_arg(var, unsigned long), 16, 16, 1);
+	}
 	return (s);
 }
 
@@ -205,7 +210,6 @@ int	ft_printf(const char *format, ...)
 
 int main(void)
 {
-
 	/*if (ft_printf(" %x ", 0) == printf(" %x ", 0))
     	printf("\n \033[0;32mCORRECT \033[0m");
 	else
@@ -344,17 +348,14 @@ int main(void)
 	printf("\n");
 	int arr[5] = {1, -1, 15, 16, 17};
 	int i = 0;
-	len1 = ft_printf("%p", NULL);
+	long num = 7466538256166632996;
+	void *ptr = &num;
+	len1 = ft_printf(".tQ\t6s549rI%p@wCZm'n_'", ptr);
 	printf("\n");
-	len2 = printf("%p", NULL);
+	len2 = printf(".tQ\t6s549rI%p@wCZm'n_'", ptr);
 	if (len1 == len2)
 		printf("\n\033[0;32mCORRECT \033[0m EXP:%d\n", len2);
 	else
-	{
 		printf("\033[0;31m\nINCORRECT GOT: %d EXP: %d\n \033[0m\n", len1, len2);
-		ft_printf("%p", NULL);
-		printf("\n");
-		printf("%p", NULL);
-	}
 	return 0;
 }

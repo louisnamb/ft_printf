@@ -12,17 +12,17 @@
 
 #include "ft_printf.h"
 
-unsigned int	ft_u_putnbr_fd(unsigned int n, int fd, int total, int *sum)
+unsigned int	ft_uputnbr_fd(unsigned int n, int fd, int total, int *sum)
 {
 	if (n < 0)
 	{
 		total += ft_putchar_fd('-', fd);
-		ft_u_putnbr_fd(-n, fd, total, sum);
+		ft_uputnbr_fd(-n, fd, total, sum);
 	}
 	else if (n >= 10)
 	{
 		total++;
-		ft_u_putnbr_fd(n / 10, fd, total, sum);
+		ft_uputnbr_fd(n / 10, fd, total, sum);
 		total += ft_putchar_fd(n % 10 + '0', fd);
 	}
 	else
@@ -33,29 +33,33 @@ unsigned int	ft_u_putnbr_fd(unsigned int n, int fd, int total, int *sum)
 	return (*sum + 1);
 }
 
-int	ft_hex_putstr(char *s, int fd, int length, int ptr)
+int	ft_hputstr(char *s, int fd, int length, int ptr)
 {
 	int	sum;
+	int	i;
 
+	i = 0;
 	sum = 0;
 	if (!s)
 		return (0);
 	if (ptr)
-		sum += write(fd, "0x", 2);
-	while (length > 0)
-	{
-		sum += write(fd, &s[length], 1);
-		length--;
-	}
-	write(fd, &s[length], 1);
+		sum += write(fd, s, length);
+	else
+		while (length >= 0)
+		{
+			sum += write(fd, &s[length], 1);
+			length--;
+		}
 	return (sum);
 }
 
-int	ft_hex_length(unsigned long num, int base)
+int	ft_hexlen(signed long long int num, int base)
 {
 	int	length;
+	int	add;
 
 	length = 0;
+	add = 0;
 	while (num != 0)
 	{
 		num /= base;
@@ -64,29 +68,48 @@ int	ft_hex_length(unsigned long num, int base)
 	return (length);
 }
 
-int	ft_convert(unsigned long num, int base, int low, int ptr)
+char *ptrmkr(char *ptr, signed long long int num)
+{
+	char *dummy_ptr;
+
+	dummy_ptr = ptr;
+	dummy_ptr[0] = 48;
+	dummy_ptr[1] = 120;
+	if (num == 0)
+		dummy_ptr[2] = '0';
+	return (ptr);
+}
+
+int	ft_convert(signed long long int num, int base, int low, int ptr)
 {
 	char			*uphexi;
 	char			*p_str;
-	char			*final;
-	int				chck;
-	unsigned long	dummy;
+	signed long long int	dummy;
+	int				sum;
+	int				i;
 
+	sum = 0;
 	dummy = num;
-	chck = 0;
+	i = 0;
 	uphexi = "0123456789ABCDEF0123456789abcdef";
-	if (low)
-		chck = 16;
-	p_str = malloc(sizeof(char) * ft_hex_length(num, base) + 1);
+	p_str = malloc(sizeof(char) * (ft_hexlen(num, base) + 2) + (2 * ptr));
 	if (!p_str)
 		return (0);
-	final = p_str;
+	if (ptr)
+	{
+		ptrmkr(p_str, num);
+		i += 2;
+		if (p_str[2] == 48)
+			i++;
+	}
 	while (dummy != 0)
 	{
-		*p_str = uphexi[dummy % base + chck];
+		p_str[i] = uphexi[(dummy % base) + low];
 		dummy /= base;
-		p_str++;
+		i++;
 	}
-	*p_str = '\0';
-	return (ft_hex_putstr(final, 1, ft_hex_length(num, base), ptr));
+	p_str[i] = 0;
+	sum += ft_hputstr(p_str, 1, i, ptr);
+	free(p_str);
+	return (sum);
 }

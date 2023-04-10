@@ -26,13 +26,13 @@ int	whichspecifier(const char c, va_list var)
 	else if (c == '%')
 		s = write(1, &c, 1);
 	else if (c == 'x')
-		s = ft_convert((unsigned int)va_arg(var, unsigned int), 16, 1, 0);
+		s = ft_convert((unsigned long)va_arg(var, unsigned int), 16, 16, 0);
 	else if (c == 'X')
-		s = ft_convert((unsigned int)va_arg(var, unsigned int), 16, 0, 0);
+		s = ft_convert((unsigned long)va_arg(var, unsigned int), 16, 0, 0);
 	else if (c == 'u')
 		s = ft_u_putnbr_fd((unsigned int)va_arg(var, unsigned int), 1, s, &s);
 	else if (c == 'p')
-		s = ft_convert((unsigned long)va_arg(var, unsigned long), 16, 1, 1);
+		s = ft_convert((unsigned long)va_arg(var, unsigned long), 16, 16, 1);
 	return (s);
 }
 
