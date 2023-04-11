@@ -6,7 +6,7 @@
 /*   By: lnambaji <lnambaji@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/29 12:43:45 by lnambaji          #+#    #+#             */
-/*   Updated: 2023/04/06 13:15:04 by lnambaji         ###   ########.fr       */
+/*   Updated: 2023/04/11 12:29:05 by lnambaji         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,12 @@ int	whichspecifier(const char c, va_list var)
 	else if (c == 'X')
 		s = ft_convert((unsigned long)va_arg(var, unsigned int), 16, 0, 0);
 	else if (c == 'u')
-		s = ft_u_putnbr_fd((unsigned int)va_arg(var, unsigned int), 1, s, &s);
+		s = ft_uputnbr_fd((unsigned int)va_arg(var, unsigned int), 1, s, &s);
 	else if (c == 'p')
-		s = ft_convert((unsigned long)va_arg(var, unsigned long), 16, 16, 1);
+	{
+		s += write(1, "0x", 2);
+		s += ft_convert((unsigned long)va_arg(var, unsigned long), 16, 16, 1);
+	}
 	return (s);
 }
 

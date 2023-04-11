@@ -6,7 +6,7 @@
 /*   By: lnambaji <lnambaji@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/29 14:54:28 by lnambaji          #+#    #+#             */
-/*   Updated: 2023/04/06 13:20:35 by lnambaji         ###   ########.fr       */
+/*   Updated: 2023/04/11 13:21:40 by lnambaji         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,7 +46,7 @@ int				ft_hexlen(signed long long int num, int base);
 
 char			*ptrmkr(char *ptr, signed long long int num);
 
-int				ft_convert(signed long long int num, int base, int low, int ptr);
+int				ft_convert(unsigned long num, int base, int low, int ptr);
 
 int				ft_printf(const char *format, ...);
 

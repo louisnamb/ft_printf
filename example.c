@@ -60,17 +60,17 @@ int	ft_putnbr_fd(int n, int fd, int total, int *sum)
 	return (*sum + 1);
 }
 
-unsigned int	ft_u_putnbr_fd(unsigned int n, int fd, int total, int *sum)
+unsigned int	ft_uputnbr_fd(unsigned int n, int fd, int total, int *sum)
 {
 	if (n < 0)
 	{
 		total += ft_putchar_fd('-', fd);
-		ft_u_putnbr_fd(-n, fd, total, sum);
+		ft_uputnbr_fd(-n, fd, total, sum);
 	}
 	else if (n >= 10)
 	{
 		total++;
-		ft_u_putnbr_fd(n / 10, fd, total, sum);
+		ft_uputnbr_fd(n / 10, fd, total, sum);
 		total += ft_putchar_fd(n % 10 + '0', fd);
 	}
 	else
@@ -81,7 +81,7 @@ unsigned int	ft_u_putnbr_fd(unsigned int n, int fd, int total, int *sum)
 	return (*sum + 1);
 }
 
-int	ft_hex_putstr(char *s, int fd, int length, int ptr)
+int	ft_hputstr(char *s, int fd, int length, int ptr)
 {
 	int	sum;
 	int	i;
@@ -90,16 +90,15 @@ int	ft_hex_putstr(char *s, int fd, int length, int ptr)
 	sum = 0;
 	if (!s)
 		return (0);
-    while (length >= 0)
+    while (length >= 1)
     {
-        sum += write(fd, &s[length], 1);
+        sum += write(fd, &s[length - 1], 1);
         length--;
     }
-//	sum += write(fd, &s[length], 1);
 	return (sum);
 }
 
-int	ft_hexlen(unsigned long num, int base)
+int	ft_hexlen(signed long long int num, int base)
 {
 	int	length;
 	int	add;
@@ -114,14 +113,19 @@ int	ft_hexlen(unsigned long num, int base)
 	return (length);
 }
 
-char *ptrmkr(char *ptr, unsigned long num)
+char *ptrmkr(char *ptr, signed long long int num)
 {
+	char *dummy_ptr;
+
+	dummy_ptr = ptr;
+	dummy_ptr[0] = 48;
+	dummy_ptr[1] = 120;
 	if (num == 0)
-		ptr[2] = '0';
+		dummy_ptr[2] = '0';
 	return (ptr);
 }
 
-int	ft_convert(unsigned long num, int base, int low, int ptr)
+int	ft_convert(signed long long int num, int base, int low, int ptr)
 {
 	char			*uphexi;
 	char			*p_str;
@@ -133,12 +137,12 @@ int	ft_convert(unsigned long num, int base, int low, int ptr)
 	dummy = num;
 	i = 0;
 	uphexi = "0123456789ABCDEF0123456789abcdef";
-	p_str = malloc(sizeof(char) * (ft_hexlen(num, base) + 2) + (2 * ptr));
+	p_str = malloc(sizeof(char) * (ft_hexlen(num, base) + 2));
 	if (!p_str)
 		return (0);
 	if (num == 0)
 	{
-		printf("inside if\n");
+		ptrmkr(p_str, num);
 		if (p_str[2] == 48)
 			i++;
 	}
@@ -149,7 +153,7 @@ int	ft_convert(unsigned long num, int base, int low, int ptr)
 		i++;
 	}
 	p_str[i] = 0;
-	sum += ft_hex_putstr(p_str, 1, i, ptr);
+	sum += ft_hputstr(p_str, 1, i, ptr);
 	free(p_str);
 	return (sum);
 }
@@ -172,11 +176,11 @@ int	whichspecifier(const char c, va_list var)
 	else if (c == 'X')
 		s = ft_convert((unsigned long)va_arg(var, unsigned int), 16, 0, 0);
 	else if (c == 'u')
-		s = ft_u_putnbr_fd((unsigned int)va_arg(var, unsigned int), 1, s, &s);
+		s = ft_uputnbr_fd((unsigned int)va_arg(var, unsigned int), 1, s, &s);
 	else if (c == 'p')
 	{
 		s += write(1, "0x", 2);
-		s = ft_convert((unsigned long)va_arg(var, unsigned long), 16, 16, 1);
+		s += ft_convert((unsigned long)va_arg(var, unsigned long), 16, 16, 1);
 	}
 	return (s);
 }
@@ -210,149 +214,21 @@ int	ft_printf(const char *format, ...)
 
 int main(void)
 {
-	/*if (ft_printf(" %x ", 0) == printf(" %x ", 0))
-    	printf("\n \033[0;32mCORRECT \033[0m");
+	signed long long int num = LONG_MAX + 423856;
+	unsigned long dummy = LONG_MAX + 423856;
+	if (dummy == num)
+		printf("equal\n");
 	else
-		printf("1 \033[0;31m\nINCORRECT GOT: %d EXP: %d\n \033[0m\n", ft_printf(" %x ", 0), printf(" %x ", 0));
-    if (ft_printf(" %x ", -1) == printf(" %x ", -1))
-    	printf("\n \033[0;32mCORRECT \033[0m");
-	else
-		printf("2 \033[0;31m\nINCORRECT GOT: %d EXP: %d\n \033[0m\n", ft_printf(" %x ", -1), printf(" %x ", -1));
-	if (ft_printf(" %x ", 1) == printf(" %x ", 1))
-    	printf("\n \033[0;32mCORRECT \033[0m");
-	else
-		printf("3 \033[0;31m\nINCORRECT GOT: %d EXP: %d\n \033[0m\n", ft_printf(" %x ", 1), printf(" %x ", 1));
-	if (ft_printf(" %x ", 9) == printf(" %x ", 9))
-    	printf("\n \033[0;32mCORRECT \033[0m");
-	else
-		printf("4 \033[0;31m\nINCORRECT GOT: %d EXP: %d\n \033[0m\n", ft_printf(" %x ", 9), printf(" %x ", 9));
-	if (ft_printf(" %x ", 10) == printf(" %x ", 10))
-    	printf("\n \033[0;32mCORRECT \033[0m");
-	else
-		printf("5 \033[0;31m\nINCORRECT GOT: %d EXP: %d\n \033[0m\n", ft_printf(" %x ", 10), printf(" %x ", 10));
-	if (ft_printf(" %x ", 11) == printf(" %x ", 11))
-    	printf("\n \033[0;32mCORRECT \033[0m");
-	else
-		printf("6 \033[0;31m\nINCORRECT GOT: %d EXP: %d\n \033[0m\n", ft_printf(" %x ", 11), printf(" %x ", 11));  
-	if (ft_printf(" %x ", 15) == printf(" %x ", 15))
-    	printf("\n \033[0;32mCORRECT \033[0m");
-	else
-		printf("7 \033[0;31m\nINCORRECT GOT: %d EXP: %d\n \033[0m\n", ft_printf(" %x ", 15), printf(" %x ", 15));
-	if (ft_printf(" %x ", 16) == printf(" %x ", 16))
-    	printf("\n \033[0;32mCORRECT \033[0m");
-	else
-		printf("8 \033[0;31m\nINCORRECT GOT: %d EXP: %d\n \033[0m\n", ft_printf(" %x ", 16), printf(" %x ", 16));
-	if (ft_printf(" %x ", 17) == printf(" %x ", 17))
-    	printf("\n \033[0;32mCORRECT \033[0m");
-	else
-		printf("9 \033[0;31m\nINCORRECT GOT: %d EXP: %d\n \033[0m\n", ft_printf(" %x ", 17), printf(" %x ", 17));
-	if (ft_printf(" %x ", 99) == printf(" %x ", 99))
-    	printf("\n \033[0;32mCORRECT \033[0m");
-	else
-		printf("10  \033[0;31m\nINCORRECT GOT: %d EXP: %d\n \033[0m\n", ft_printf(" %x ", 99), printf(" %x ", 99));
-	if (ft_printf(" %x ", 100) == printf(" %x ", 100))
-    	printf("\n \033[0;32mCORRECT \033[0m");
-	else
-		printf("11  \033[0;31m\nINCORRECT GOT: %d EXP: %d\n \033[0m\n", ft_printf(" %x ", 100), printf(" %x ", 100));
-	if (ft_printf(" %x ", 101) == printf(" %x ", 101))
-    	printf("\n \033[0;32mCORRECT \033[0m");
-	else
-		printf("12 \033[0;31m\nINCORRECT GOT: %d EXP: %d\n \033[0m\n", ft_printf(" %x ", 101), printf(" %x ", 101));
-	if (ft_printf(" %x ", -9) == printf(" %x ", -9))
-    	printf("\n \033[0;32mCORRECT \033[0m");
-	else
-		printf("13 \033[0;31m\nINCORRECT GOT: %d EXP: %d\n \033[0m\n", ft_printf(" %x ", -9), printf(" %x ", -9));
-	if (ft_printf(" %x ", -10) == printf(" %x ", -10))
-    	printf("\n \033[0;32mCORRECT \033[0m");
-	else
-		printf("14 \033[0;31m\nINCORRECT GOT: %d EXP: %d\n \033[0m\n", ft_printf(" %x ", -10), printf(" %x ", -10));
-	if (ft_printf(" %x ", -11) == printf(" %x ", -11))
-    	printf("\n \033[0;32mCORRECT \033[0m");
-	else
-		printf("15 \033[0;31m\nINCORRECT GOT: %d EXP: %d\n \033[0m\n", ft_printf(" %x ", 11), printf(" %x ", 11));
-	if (ft_printf(" %x ", -14) == printf(" %x ", -14))
-    	printf("\n \033[0;32mCORRECT \033[0m");
-	else
-		printf("16 \033[0;31m\nINCORRECT GOT: %d EXP: %d\n \033[0m\n", ft_printf(" %x ", -14), printf(" %x ", -14));
-	if (ft_printf(" %x ", -15) == printf(" %x ", -15))
-    	printf("\n \033[0;32mCORRECT \033[0m");
-	else
-		printf("17 \033[0;31m\nINCORRECT GOT: %d EXP: %d\n \033[0m\n", ft_printf(" %x ", -15), printf(" %x ", -15));
-	if (ft_printf(" %x ", -16) == printf(" %x ", -16))
-    	printf("\n \033[0;32mCORRECT \033[0m");
-	else
-		printf("18 \033[0;31m\nINCORRECT GOT: %d EXP: %d\n \033[0m\n", ft_printf(" %x ", -16), printf(" %x ", -16));
-	if (ft_printf(" %x ", -99) == printf(" %x ", -99))
-    	printf("\n \033[0;32mCORRECT \033[0m");
-	else
-		printf("19 \033[0;31m\nINCORRECT GOT: %d EXP: %d\n \033[0m\n", ft_printf(" %x ", -99), printf(" %x ", -99));
-	if (ft_printf(" %x ", -100) == printf(" %x ", -100))
-    	printf("\n \033[0;32mCORRECT \033[0m");
-	else
-		printf("20 \033[0;31m\nINCORRECT GOT: %d EXP: %d\n \033[0m\n", ft_printf(" %x ", -100), printf(" %x ", -100));
-	if (ft_printf(" %x ", -101) == printf(" %x ", -101))
-    	printf("\n \033[0;32mCORRECT \033[0m");
-	else
-		printf("21 \033[0;31m\nINCORRECT GOT: %d EXP: %d\n \033[0m\n", ft_printf(" %x ", -101), printf(" %x ", -101));
-	if (ft_printf(" %x ", INT_MAX) == printf(" %x ", INT_MAX))
-    	printf("\n \033[0;32mCORRECT \033[0m");
-	else
-		printf("22 \033[0;31m\nINCORRECT GOT: %d EXP: %d\n \033[0m\n", ft_printf(" %x ", INT_MAX), printf(" %x ", INT_MAX));
-	if (ft_printf(" %x ", INT_MIN) == printf(" %x ", INT_MIN))
-    	printf("\n \033[0;32mCORRECT \033[0m");
-	else
-		printf("23 \033[0;31m\nINCORRECT GOT: %d EXP: %d\n \033[0m\n", ft_printf(" %x ", INT_MIN), printf(" %x ", INT_MIN));
-	if (ft_printf(" %x ", LONG_MAX) == printf(" %x ", LONG_MAX))
-    	printf("\n \033[0;32mCORRECT \033[0m");
-	else
-		printf(" \033[0;31m\nINCORRECT GOT: %d EXP: %d\n \033[0m\n", ft_printf(" %x ", LONG_MAX), printf(" %x ", LONG_MAX));
-	if (ft_printf(" %x ", LONG_MIN) == printf(" %x ", LONG_MIN))
-    	printf("\n \033[0;32mCORRECT \033[0m");
-	else
-		printf(" \033[0;31m\nINCORRECT GOT: %d EXP: %d\n \033[0m\n", ft_printf(" %x ", LONG_MIN), printf(" %x ", LONG_MIN)); 
-	if (ft_printf(" %x ", UINT_MAX) == printf(" %x ", UINT_MAX))
-    	printf("\n \033[0;32mCORRECT \033[0m");
-	else
-		printf("24 \033[0;31m\nINCORRECT GOT: %d EXP: %d\n \033[0m\n", ft_printf(" %x ", UINT_MAX), printf(" %x ", UINT_MAX)); 
-	if (ft_printf(" %x ", ULONG_MAX) == printf(" %x ", ULONG_MAX))
-    	printf("\n \033[0;32mCORRECT \033[0m");
-	else
-		printf(" \033[0;31m\nINCORRECT GOT: %d EXP: %d\n \033[0m\n", ft_printf(" %x ", ULONG_MAX), printf(" %x ", ULONG_MAX)); 
-	if (ft_printf(" %x ", 9223372036854775807LL) == printf(" %x ", 9223372036854775807LL))
-    	printf("\n \033[0;32mCORRECT \033[0m");
-	else
-		printf(" \033[0;31m\nINCORRECT GOT: %d EXP: %d\n \033[0m\n", ft_printf(" %x ", 9223372036854775807LL), printf(" %x ", 9223372036854775807LL));
-	int len1 = ft_printf(" %x %x %x %x", INT_MAX, INT_MIN, 0, -42);
-	printf("\n\nreal:");
-	int len2 = printf(" %x %x %x %x", INT_MAX, INT_MIN, 0, -42);
-	if (len1 == len2)
-    	printf("\n \033[0;32mCORRECT \033[0m");
-	else
-		printf("\n\n\033[0;31m\n25 INCORRECT GOT: %d EXP: %d\n \033[0m\n", ft_printf(" %x %x %x %x", INT_MAX, INT_MIN, 0, -42), printf(" %x %x %x %x", INT_MAX, INT_MIN, 0, -42)); 
-    if (ft_printf(" %x ", 42) == printf(" %x ", 42))
-    	printf("\n \033[0;32mCORRECT \033[0m");
-	else
-		printf("26 \033[0;31m\nINCORRECT GOT: %d EXP: %d\n \033[0m\n", ft_printf(" %x ", 42), printf(" %x ", 42)); 
-	if (ft_printf(" %x ", -42) == printf(" %x ", -42))
-        	printf("\n \033[0;32mCORRECT \033[0m");
-	else
-		printf("27 \033[0;31m\nINCORRECT GOT: %d EXP: %d\n \033[0m\n", ft_printf(" %x ", -42), printf(" %x ", -42));
-    len1 = ft_printf("%x %x", 0, -42);
-	len2 = printf("%x %x", 0, -42);
+		printf("num: %llu dummy :%lu\n", num, dummy);
 	printf("\n\n");
-	if (len1 == len2)
-		printf("correct\n");
-	else
-		printf("wrong, exp: %d got: %d", len2, len1);*/
 	int len1, len2;
 	printf("\n");
 	int arr[5] = {1, -1, 15, 16, 17};
 	int i = 0;
-	long num = 7466538256166632996;
-	void *ptr = &num;
-	len1 = ft_printf(".tQ\t6s549rI%p@wCZm'n_'", ptr);
+	int *ptr = &i;
+	len1 = ft_printf("%pp%p%p", (void *)LONG_MAX + 423856, (void *)0, (void *)INT_MAX);
 	printf("\n");
-	len2 = printf(".tQ\t6s549rI%p@wCZm'n_'", ptr);
+	len2 = printf("%pp%p%p", (void *)LONG_MAX + 423856, (void *)0, (void *)INT_MAX);
 	if (len1 == len2)
 		printf("\n\033[0;32mCORRECT \033[0m EXP:%d\n", len2);
 	else
