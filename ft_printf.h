@@ -6,7 +6,7 @@
 /*   By: lnambaji <lnambaji@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/29 14:54:28 by lnambaji          #+#    #+#             */
-/*   Updated: 2023/04/11 13:42:28 by lnambaji         ###   ########.fr       */
+/*   Updated: 2023/04/11 15:22:33 by lnambaji         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,11 +34,11 @@ unsigned int	ft_uputnbr_fd(unsigned int n, int fd, int total, int *sum);
 
 int				ft_hputstr(char *s, int fd, int length, int ptr);
 
-int				ft_hexlen(signed long long int num, int base);
+int				ft_hexlen(unsigned long long int num, int base);
 
-char			*ptrmkr(char *ptr, signed long long int num);
+char			*ptrmkr(char *ptr, unsigned long long num);
 
-int				ft_convert(unsigned long num, int base, int low, int ptr);
+int				ft_convert(unsigned long long num, int base, int low, int ptr);
 
 int				ft_printf(const char *format, ...);
 
