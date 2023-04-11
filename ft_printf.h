@@ -6,25 +6,17 @@
 /*   By: lnambaji <lnambaji@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/03/29 14:54:28 by lnambaji          #+#    #+#             */
-/*   Updated: 2023/04/11 13:21:40 by lnambaji         ###   ########.fr       */
+/*   Updated: 2023/04/11 13:42:28 by lnambaji         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef FT_PRINTF_H
-#define FT_PRINTF_H
+# define FT_PRINTF_H
 
-#include <stdlib.h>
-#include <unistd.h>
-#include <stdio.h>
-#include <stdarg.h>
-
-# ifndef BUFFER_SIZE
-#  define BUFFER_SIZE 5000
-# endif
-
-# ifndef OPEN_MAX
-#  define OPEN_MAX 32
-# endif
+# include <stdarg.h>
+# include <unistd.h>
+# include <stdlib.h>
+# include <stdio.h>
 
 size_t			ft_strlen(const char *s);
 

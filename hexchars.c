@@ -6,7 +6,7 @@
 /*   By: lnambaji <lnambaji@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/04/06 10:18:28 by lnambaji          #+#    #+#             */
-/*   Updated: 2023/04/11 13:21:15 by lnambaji         ###   ########.fr       */
+/*   Updated: 2023/04/11 13:51:44 by lnambaji         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,11 +42,11 @@ int	ft_hputstr(char *s, int fd, int length, int ptr)
 	sum = 0;
 	if (!s)
 		return (0);
-    while (length >= 1)
-    {
-        sum += write(fd, &s[length - 1], 1);
-        length--;
-    }
+	while (length >= 1)
+	{
+		sum += write(fd, &s[length - 1], 1);
+		length--;
+	}
 	return (sum);
 }
 
@@ -65,9 +65,9 @@ int	ft_hexlen(signed long long int num, int base)
 	return (length);
 }
 
-char *ptrmkr(char *ptr, signed long long int num)
+char	*ptrmkr(char *ptr, signed long long int num)
 {
-	char *dummy_ptr;
+	char	*dummy_ptr;
 
 	dummy_ptr = ptr;
 	dummy_ptr[0] = 48;
@@ -81,16 +81,13 @@ int	ft_convert(unsigned long num, int base, int low, int ptr)
 {
 	char			*uphexi;
 	char			*p_str;
-	unsigned long	dummy;
 	int				sum;
 	int				i;
 
 	sum = 0;
-	dummy = num;
 	i = 0;
 	uphexi = "0123456789ABCDEF0123456789abcdef";
-	p_str = malloc(sizeof(char) * (ft_hexlen(num, base) + 2));
-	if (!p_str)
+	if (!(p_str = malloc(sizeof(char) * (ft_hexlen(num, base) + 2))))
 		return (0);
 	if (num == 0)
 	{
@@ -98,11 +95,10 @@ int	ft_convert(unsigned long num, int base, int low, int ptr)
 		if (p_str[2] == 48)
 			i++;
 	}
-	while (dummy != 0)
+	while (num != 0)
 	{
-		p_str[i] = uphexi[(dummy % base) + low];
-		dummy /= base;
-		i++;
+		p_str[i++] = uphexi[(num % base) + low];
+		num /= base;
 	}
 	p_str[i] = 0;
 	sum += ft_hputstr(p_str, 1, i, ptr);
